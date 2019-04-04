@@ -4,6 +4,7 @@
     * Run make and then ./shell to run the shell
  # How to quit
     * Type quit to quit the shell
+    
 # Specification 1: Display requirement
     When you execute your code a shell prompt similar to the following must appear:
     <username@system_name:curr_dir>
@@ -14,6 +15,7 @@
     Example: ./a.out
     <Name@UBUNTU:~> cd newdir
     <Name@UBUNTU:~/newdir>
+    
   # Specification 2: Built-in Commands
     Builtin commands are contained within the shell itself. Checkout ‘type
     commandname’ in the terminal (eg. ‘type echo’).
@@ -24,6 +26,7 @@
     Make sure you implement cd, pwd and echo.
     Don’t use ‘execvp’ or similar commands for these, using these doesn’t mean it’s
     built-in to your shell.
+    
   # Specification 3: ls command
     Implement ls [al] – (it should be able to handle ls, ls -l, ls -a and ls -al/la. For ls and
     ls -a, outputting the entries in a single column is fine.
@@ -38,6 +41,7 @@
     Background processes: Any command invoked with "&" is treated as background
     command. This implies that your shell will spawn that process and doesn't wait for
     the process to exit. It will keep taking user commands.
+    
     E.g
     <Name@UBUNTU:~> ls &
     This command when finished, should print its result to stdout.
@@ -52,12 +56,14 @@
     
    # Specification 5: pinfo command (user defined)
     pinfo : prints the process related info of your shell program.
+    
     Ex: <Name@UBUNTU:~> pinfo
     pid -- 231
     Process Status -- {R/S/S+/Z} memory
     - 67854 {Virtual Memory}
     - Executable Path -- ~/a.out
     -pinfo <pid> : prints the process info about given pid.
+    
     Ex: <Name@UBUNTU:~>pinfo 7777
     pid -- 7777
     Process Status -- {R/S/S+/Z} memory
@@ -66,6 +72,7 @@
    # Specification 6: Finished Background Processes
       If the background process exits then the shell must display the appropriate
       message to the user.
+      
       Example:
       After emacs exits, your shell program should check the exit status of emacs and
       print it on stderr.
@@ -78,6 +85,7 @@
       output to another file. Appropriate error handling must be done (like if the input
       file does not exist – display error message, if output file does not exist - create one
       with permissions of 644, etc.)
+      
       Output Redirection - Ex:
       <NAME@UBUNTU:~> diff file1.txt file2.txt > output.txt
       Input Redirection - Ex:
@@ -89,6 +97,7 @@
    # Specification 8: Implement command redirection using pipes
       A pipe is identified by "|". One or more commands can be piped as the following
       examples show. Your program must be able to support any number of pipes.
+      
       Two Commands - Ex:
       <NAME@UBUNTU:~> more file.txt | wc
       Three Commands - Ex:
@@ -116,6 +125,7 @@
         - jobs : prints a list of all currently running jobs along with their pid, in particular,
         background jobs, in order of their creation along with their state – Running or
         Stopped.
+        
         <NAME@UBUNTU:~> jobs
         [1]
         Running
@@ -126,49 +136,53 @@
         [3]
         Running
         vim [3211]
-    [4]
-    Stopped
-    gedit [3213]
-    Here [4] i.e. gedit is most recent background job, and the oldest one is [1] emacs.
+        [4]
+        Stopped
+        gedit [3213]
+        Here [4] i.e. gedit is most recent background job, and the oldest one is [1] emacs.
+
+        - kjob <jobNumber> <signalNumber> : takes the job id of a running job and
+        sends a signal value to that process
+        
+        <NAME@UBUNTU:~> kjob 2 9
+        It sends SIGKILL to the process firefox, and as a result it is terminated. Here 9
+        represents the signal number, which is SIGKILL. For further info, lookup “man 7
+        signal“
+
+        - fg <jobNumber> : brings a running or a stopped background job with given job
+        number to foreground.
+        
+        <NAME@UBUNTU:~> fg 3
+        Either brings the 3rd job which is vim to foreground or returns error if no such
+        background number exists.
+
+        - bg <jobNumber> : changes a stopped background job to a running background
+        job.
+        
+        <NAME@UBUNTU:~> bg 4
+        Changes gedit from Stopped in the background to Running in the background or
+        return error if no such stopped background job exists. If that job is already running,
+        do nothing.
     
-    - kjob <jobNumber> <signalNumber> : takes the job id of a running job and
-    sends a signal value to that process
-    <NAME@UBUNTU:~> kjob 2 9
-    It sends SIGKILL to the process firefox, and as a result it is terminated. Here 9
-    represents the signal number, which is SIGKILL. For further info, lookup “man 7
-    signal“
-    
-    - fg <jobNumber> : brings a running or a stopped background job with given job
-    number to foreground.
-    <NAME@UBUNTU:~> fg 3
-    Either brings the 3rd job which is vim to foreground or returns error if no such
-    background number exists.
-    
-    - bg <jobNumber> : changes a stopped background job to a running background
-    job.
-    <NAME@UBUNTU:~> bg 4
-    Changes gedit from Stopped in the background to Running in the background or
-    return error if no such stopped background job exists. If that job is already running,
-    do nothing.
-    
-    - overkill : kills all background process at once.
-    
-    - quit : exits the shell. Your shell should exit only if the user types this "quit"
-    command. It should ignore any other signal from user like : CTRL-D, CTRL-C,
-    SIGINT, SIGCHLD etc.
-    
-    - CTRL-Z : It should change the status of currently running job to stop, and push it
-    in background process.
-    
-    - CTRL-C : It should cause a SIGINT signal to be sent to the current foreground
-    job of your shell. If there is no foreground job, then the signal should not have
-    any effect. 
+        - overkill : kills all background process at once.
+
+        - quit : exits the shell. Your shell should exit only if the user types this "quit"
+        command. It should ignore any other signal from user like : CTRL-D, CTRL-C,
+        SIGINT, SIGCHLD etc.
+
+        - CTRL-Z : It should change the status of currently running job to stop, and push it
+        in background process.
+
+        - CTRL-C : It should cause a SIGINT signal to be sent to the current foreground
+        job of your shell. If there is no foreground job, then the signal should not have
+        any effect. 
 
    # BONUS
     1) Personal Reminder:
     Implement a reminder command ‘remindme’ which reminds you with a custom
     message after the given number of seconds elapse. You should allow the shell to
     take in commands during this time.
+    
     Example:
     <Name@UBUNTU:~> remindme 20 “Go to OS Class.”
     <Name@UBUNTU:~>
@@ -179,6 +193,7 @@
     Implement a ‘clock’ command which displays dynamic date and time in your shell.
     Updates should be done based on fixed time interval given as an argument. The
     usage of ‘date’ or similar commands is not allowed.
+    
     Example:
     <Name@UBUNTU:~> clock -t 3 -n 2
     11 Aug 2018, 15:18:21
